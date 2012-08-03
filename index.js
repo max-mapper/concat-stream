@@ -9,6 +9,8 @@ function ConcatStream(cb) {
   this.on('error', cb)
 }
 
+util.inherits(ConcatStream, stream.Stream)
+
 ConcatStream.prototype.write = function(chunk) {
   this.body.push(chunk)
 }
@@ -24,14 +26,13 @@ ConcatStream.prototype.getBody = function () {
     })
     return first
   }
+  if (this.body.length === 1) return this.body[0]
   return this.body
 }
 
 ConcatStream.prototype.end = function() {
   this.cb(false, this.getBody())
 }
-
-util.inherits(ConcatStream, stream.Stream)
 
 module.exports = function(cb) {
   return new ConcatStream(cb)
