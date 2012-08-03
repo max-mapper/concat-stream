@@ -1,5 +1,6 @@
 var stream = require('stream')
 var util = require('util')
+var bufferjoiner = require('bufferjoiner')
 
 function ConcatStream(cb) {
   stream.Stream.call(this)
@@ -26,7 +27,13 @@ ConcatStream.prototype.getBody = function () {
     })
     return first
   }
-  if (this.body.length === 1) return this.body[0]
+  if (typeof(Buffer) !== "undefined" && Buffer.isBuffer(this.body[0])) {
+    var buffs = new BufferJoiner()
+    this.body.forEach(function(buf) {
+      buffs.add(buf)
+    })
+    return buffs.join()
+  }
   return this.body
 }
 

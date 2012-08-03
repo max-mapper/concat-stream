@@ -1,0 +1,6 @@
+docs/
+examples/
+test/
+lib-cov/
+coverage.html
+README.md
