@@ -1,6 +1,5 @@
 var stream = require('stream')
 var util = require('util')
-var BufferJoiner = require('bufferjoiner')
 
 function ConcatStream(cb) {
   stream.Stream.call(this)
@@ -16,23 +15,24 @@ ConcatStream.prototype.write = function(chunk) {
   this.body.push(chunk)
 }
 
+ConcatStream.prototype.arrayConcat = function(arrs) {
+  if (arrs.length === 0) return []
+  if (arrs.length === 1) return arrs[0]
+  return arrs.reduce(function (a, b) { return a.concat(b) })
+}
+
+ConcatStream.prototype.isArray = function(arr) {
+  var isArray = Array.isArray(arr)
+  var isTypedArray = arr.toString().match(/Array/)
+  return isArray || isTypedArray
+}
+
 ConcatStream.prototype.getBody = function () {
   if (this.body.length === 0) return
   if (typeof(this.body[0]) === "string") return this.body.join('')
-  if (this.body[0].toString().match(/Array/)) {
-    var first = false
-    this.body.forEach(function(ary) {
-      if (!first) return first = ary
-      first.concat(ary)
-    })
-    return first
-  }
+  if (this.isArray(this.body[0])) return this.arrayConcat(this.body)
   if (typeof(Buffer) !== "undefined" && Buffer.isBuffer(this.body[0])) {
-    var buffs = new BufferJoiner()
-    this.body.forEach(function(buf) {
-      buffs.add(buf)
-    })
-    return buffs.join()
+    return Buffer.concat(this.body)
   }
   return this.body
 }
