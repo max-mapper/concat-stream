@@ -1,6 +1,6 @@
 var stream = require('stream')
 var util = require('util')
-var bufferjoiner = require('bufferjoiner')
+var BufferJoiner = require('bufferjoiner')
 
 function ConcatStream(cb) {
   stream.Stream.call(this)
