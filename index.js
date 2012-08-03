@@ -2,7 +2,7 @@ var stream = require('stream')
 var util = require('util')
 
 function ConcatStream(cb) {
-  stream.Stream.call(me)
+  stream.Stream.call(this)
   this.writable = true
   this.cb = cb
   this.body = []

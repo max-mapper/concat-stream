@@ -14,10 +14,10 @@ then
     
 works with arrays too!
 
-  var write = concat(function(err, data) {})
-  write.write([1,2,3])
-  write.write([4,5,6])
-  write.end()
-  // data will be [1,2,3,4,5,6] in the above callback
+    var write = concat(function(err, data) {})
+    write.write([1,2,3])
+    write.write([4,5,6])
+    write.end()
+    // data will be [1,2,3,4,5,6] in the above callback
     
 MIT LICENSE
