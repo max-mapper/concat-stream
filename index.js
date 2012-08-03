@@ -6,6 +6,7 @@ function ConcatStream(cb) {
   this.writable = true
   this.cb = cb
   this.body = []
+  this.on('error', cb)
 }
 
 ConcatStream.prototype.write = function(chunk) {
