@@ -4,9 +4,9 @@ var util = require('util')
 function ConcatStream(cb) {
   stream.Stream.call(this)
   this.writable = true
-  this.cb = cb
+  if (cb) this.cb = cb
   this.body = []
-  this.on('error', cb)
+  if (this.cb) this.on('error', cb)
 }
 
 util.inherits(ConcatStream, stream.Stream)
@@ -38,7 +38,7 @@ ConcatStream.prototype.getBody = function () {
 }
 
 ConcatStream.prototype.end = function() {
-  this.cb(false, this.getBody())
+  if (this.cb) this.cb(false, this.getBody())
 }
 
 module.exports = function(cb) {
