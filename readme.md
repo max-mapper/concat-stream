@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/maxogden/node-concat-stream.png)](http://travis-ci.org/maxogden/node-concat-stream)
 # concat-stream
 
     npm install concat-stream
