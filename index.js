@@ -15,6 +15,8 @@ ConcatStream.prototype.write = function(chunk) {
   this.body.push(chunk)
 }
 
+ConcatStream.prototype.destroy = function() {}
+
 ConcatStream.prototype.arrayConcat = function(arrs) {
   if (arrs.length === 0) return []
   if (arrs.length === 1) return arrs[0]
