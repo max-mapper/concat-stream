@@ -6,7 +6,9 @@ function ConcatStream(cb) {
   this.writable = true
   if (cb) this.cb = cb
   this.body = []
-  if (this.cb) this.on('error', cb)
+  this.on('error', function(err) {
+    if (this.cb) this.cb(err)
+  })
 }
 
 util.inherits(ConcatStream, stream.Stream)
