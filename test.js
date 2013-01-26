@@ -19,10 +19,10 @@ arrays.end()
 
 // buffer stream
 var buffers = concat(function(err, out) {
-  console.log('buffers', err, out)
+  console.log('buffers', err, out.toString())
 })
-buffers.write(new Buffer('pizza '))
-buffers.write(new Buffer('cats'))
+buffers.write(new Buffer('pizza Array is not a ', 'utf8'))
+buffers.write(new Buffer('stringy cat'))
 buffers.end()
 
 // string stream

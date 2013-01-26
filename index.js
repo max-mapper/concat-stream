@@ -26,9 +26,7 @@ ConcatStream.prototype.arrayConcat = function(arrs) {
 }
 
 ConcatStream.prototype.isArray = function(arr) {
-  var isArray = Array.isArray(arr)
-  var isTypedArray = arr.toString().match(/Array/)
-  return isArray || isTypedArray
+  return Array.isArray(arr)
 }
 
 ConcatStream.prototype.getBody = function () {
