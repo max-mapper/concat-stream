@@ -7,7 +7,7 @@ function ConcatStream(cb) {
   if (cb) this.cb = cb
   this.body = []
   this.on('error', function(err) {
-    if (this.cb) this.cb(err)
+    // no-op
   })
 }
 
@@ -40,7 +40,7 @@ ConcatStream.prototype.getBody = function () {
 }
 
 ConcatStream.prototype.end = function() {
-  if (this.cb) this.cb(false, this.getBody())
+  if (this.cb) this.cb(this.getBody())
 }
 
 module.exports = function(cb) {
