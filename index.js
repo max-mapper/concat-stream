@@ -1,4 +1,5 @@
 var stream = require('stream')
+var bops = require('bops')
 var util = require('util')
 
 function ConcatStream(cb) {
@@ -33,9 +34,7 @@ ConcatStream.prototype.getBody = function () {
   if (this.body.length === 0) return
   if (typeof(this.body[0]) === "string") return this.body.join('')
   if (this.isArray(this.body[0])) return this.arrayConcat(this.body)
-  if (typeof(Buffer) !== "undefined" && Buffer.isBuffer(this.body[0])) {
-    return Buffer.concat(this.body)
-  }
+  if (bops.is(this.body[0])) return bops.join(this.body)
   return this.body
 }
 
