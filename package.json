@@ -23,7 +23,7 @@
   "scripts": {
     "test": "node test.js"
   },
-  "license": "BSD",
+  "license": "MIT",
   "dependencies": {
     "bops": "0.0.6"
   }
