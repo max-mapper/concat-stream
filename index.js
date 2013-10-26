@@ -15,6 +15,7 @@ function ConcatStream(cb) {
 util.inherits(ConcatStream, stream.Stream)
 
 ConcatStream.prototype.write = function(chunk) {
+  this.emit('data', chunk)
   this.body.push(chunk)
 }
 
@@ -39,6 +40,7 @@ ConcatStream.prototype.getBody = function () {
 }
 
 ConcatStream.prototype.end = function() {
+  this.emit('end')
   if (this.cb) this.cb(this.getBody())
 }
 
