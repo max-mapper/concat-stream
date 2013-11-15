@@ -32,7 +32,7 @@ ConcatStream.prototype.isArray = function(arr) {
 }
 
 ConcatStream.prototype.getBody = function () {
-  if (this.body.length === 0) return
+  if (this.body.length === 0) return bops.from(0)
   if (typeof(this.body[0]) === "string") return this.body.join('')
   if (this.isArray(this.body[0])) return this.arrayConcat(this.body)
   if (bops.is(this.body[0])) return bops.join(this.body)
