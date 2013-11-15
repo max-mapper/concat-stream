@@ -39,7 +39,8 @@ ConcatStream.prototype.getBody = function () {
   return this.body
 }
 
-ConcatStream.prototype.end = function() {
+ConcatStream.prototype.end = function(chunk) {
+  if (chunk) this.write(chunk)
   this.emit('end')
   if (this.cb) this.cb(this.getBody())
 }
