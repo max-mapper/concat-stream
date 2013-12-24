@@ -1,52 +1,45 @@
-var stream = require('stream')
-var bops = require('bops')
-var util = require('util')
+var Writable = require('stream').Writable
+var inherits = require('inherits')
 
-function ConcatStream(cb) {
-  stream.Stream.call(this)
-  this.writable = true
-  if (cb) this.cb = cb
+function ConcatStream(cb, opts) {
+  if (!(this instanceof ConcatStream)) return new ConcatStream(cb, opts)
+  Writable.call(this, { objectMode: true })
+  if (!opts) opts = {}
+  if (cb) this.on('finished', function () { cb(this.getBody()) })
+  this.mode = opts.mode || 'buffer'
   this.body = []
-  this.on('error', function(err) {
-    // no-op
-  })
 }
 
-util.inherits(ConcatStream, stream.Stream)
+module.exports = ConcatStream
+inherits(ConcatStream, Writable)
 
-ConcatStream.prototype.write = function(chunk) {
-  this.emit('data', chunk)
-  this.body.push(chunk)
-}
-
-ConcatStream.prototype.destroy = function() {}
-
-ConcatStream.prototype.arrayConcat = function(arrs) {
-  if (arrs.length === 0) return []
-  if (arrs.length === 1) return arrs[0]
-  return arrs.reduce(function (a, b) { return a.concat(b) })
-}
-
-ConcatStream.prototype.isArray = function(arr) {
-  return Object.prototype.toString.call(arr) == '[object Array]'
+ConcatStream.prototype._write = function(chunk, enc, next) {
+  if (this.mode !== 'buffer') {
+    this.body.push(chunk)
+  }
+  else if (Buffer.isBuffer(chunk)) {
+    this.body.push(chunk)
+  }
+  else if (typeof chunk === 'string' || isArrayish(chunk)) {
+    this.body.push(Buffer(chunk))
+  }
+  else {
+    this.body.push(Buffer(String(chunk)))
+  }
+  next()
 }
 
 ConcatStream.prototype.getBody = function () {
-  if (this.body.length === 0) return bops.from(0)
-  if (typeof(this.body[0]) === "string") return this.body.join('')
-  if (this.isArray(this.body[0])) return this.arrayConcat(this.body)
-  if (bops.is(this.body[0])) return bops.join(this.body)
+  if (this.mode === 'array') return this.body
+  if (this.mode === 'string') return this.body.join('')
+  if (this.mode === 'buffer') return Buffer.concat(this.body)
   return this.body
 }
 
-ConcatStream.prototype.end = function(chunk) {
-  if (chunk) this.write(chunk)
-  this.emit('end')
-  if (this.cb) this.cb(this.getBody())
+var isArray = Array.isArray || function (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]'
 }
 
-module.exports = function(cb) {
-  return new ConcatStream(cb)
+function isArrayish (arr) {
+  return /Array\]$/.test(Object.prototype.toString.call(arr))
 }
-
-module.exports.ConcatStream = ConcatStream

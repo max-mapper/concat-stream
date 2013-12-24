@@ -25,6 +25,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "bops": "0.0.6"
+    "inherits": "~2.0.1"
   }
 }
