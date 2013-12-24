@@ -26,5 +26,8 @@
   "license": "MIT",
   "dependencies": {
     "inherits": "~2.0.1"
+  },
+  "devDependencies": {
+    "tape": "~2.3.2"
   }
 }

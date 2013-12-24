@@ -1,13 +1,4 @@
-var spawn = require('child_process').spawn
-var concat = require('./')
-
-// real world example
-var cmd = spawn('ls')
-cmd.stdout.pipe(
-  concat(function(out) {
-    console.log('`ls`', out.toString())
-  })
-)
+var concat = require('../')
 
 // array stream
 var arrays = concat(function(out) {

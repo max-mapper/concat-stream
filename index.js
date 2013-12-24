@@ -5,7 +5,7 @@ function ConcatStream(cb, opts) {
   if (!(this instanceof ConcatStream)) return new ConcatStream(cb, opts)
   Writable.call(this, { objectMode: true })
   if (!opts) opts = {}
-  if (cb) this.on('finished', function () { cb(this.getBody()) })
+  if (cb) this.on('finish', function () { cb(this.getBody()) })
   this.mode = opts.mode || 'buffer'
   this.body = []
 }
