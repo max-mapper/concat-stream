@@ -18,7 +18,7 @@ test('buffer mixed writes', function (t) {
   t.plan(2)
   var buffers = concat(function(out) {
     t.ok(Buffer.isBuffer(out))
-    t.equal(out.toString('utf8'), 'pizza Array is not a stringy cat')
+    t.equal(out.toString('utf8'), 'pizza Array is not a stringy cat555')
   })
   buffers.write(new Buffer('pizza'))
   buffers.write(' Array is not a ')
@@ -26,5 +26,6 @@ test('buffer mixed writes', function (t) {
   var u8 = new U8(4)
   u8[0] = 32; u8[1] = 99; u8[2] = 97; u8[3] = 116
   buffers.write(u8)
+  buffers.write(555)
   buffers.end()
 })
