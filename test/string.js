@@ -22,3 +22,13 @@ test('string stream', function (t) {
   strings.write("dogs")
   strings.end()
 })
+
+test('end chunk', function (t) {
+  t.plan(1)
+  var endchunk = concat({ encoding: 'string' }, function(out) {
+    t.equal(out, 'this is the end')
+  })
+  endchunk.write("this ")
+  endchunk.write("is the ")
+  endchunk.end("end")
+})
