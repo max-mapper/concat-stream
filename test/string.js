@@ -44,7 +44,7 @@ test('string from mixed write encodings', function (t) {
   strings.write('na')
   strings.write(Buffer('cho'))
   strings.write([ 32, 100 ])
-  var u8 = new U8
+  var u8 = new U8(3)
   u8[0] = 111; u8[1] = 103; u8[2] = 115;
   strings.end(u8)
 })

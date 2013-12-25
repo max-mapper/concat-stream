@@ -5,23 +5,18 @@ var U8 = typeof Uint8Array !== 'undefined' ? Uint8Array : TA.Uint8Array
 
 function ConcatStream(opts, cb) {
   if (!(this instanceof ConcatStream)) return new ConcatStream(opts, cb)
-  
+
   if (typeof opts === 'function') {
     cb = opts
     opts = {}
   }
   if (!opts) opts = {}
-  
+
   var encoding = String(opts.encoding || 'buffer').toLowerCase()
-  
-  if (!opts.objectMode && (encoding === 'buffer' || encoding === 'string')) {
-    Writable.call(this, { encoding: encoding })
-  }
-  else {
-    Writable.call(this, { objectMode: true })
-  }
+  Writable.call(this, { objectMode: true })
+
   this.encoding = encoding
-  
+
   if (cb) this.on('finish', function () { cb(this.getBody()) })
   this.body = []
 }
@@ -30,25 +25,14 @@ module.exports = ConcatStream
 inherits(ConcatStream, Writable)
 
 ConcatStream.prototype._write = function(chunk, enc, next) {
-  if (this.encoding !== 'buffer') {
-    this.body.push(chunk)
-  }
-  else if (Buffer.isBuffer(chunk)) {
-    this.body.push(chunk)
-  }
-  else if (typeof chunk === 'string' || isArrayish(chunk)) {
-    this.body.push(Buffer(chunk))
-  }
-  else {
-    this.body.push(Buffer(String(chunk)))
-  }
+  this.body.push(chunk)
   next()
 }
 
 ConcatStream.prototype.getBody = function () {
   if (this.encoding === 'array') return arrayConcat(this.body)
-  if (this.encoding === 'string') return this.body.join('')
-  if (this.encoding === 'buffer') return Buffer.concat(this.body)
+  if (this.encoding === 'string') return stringConcat(this.body)
+  if (this.encoding === 'buffer') return bufferConcat(this.body)
   if (this.encoding === 'uint8array') return u8Concat(this.body)
   return this.body
 }
@@ -59,6 +43,35 @@ var isArray = Array.isArray || function (arr) {
 
 function isArrayish (arr) {
   return /Array\]$/.test(Object.prototype.toString.call(arr))
+}
+
+function stringConcat (parts) {
+  var strings = []
+  for (var i = 0; i < parts.length; i++) {
+    var p = parts[i]
+    if (typeof p === 'string') {
+      strings.push(p)
+    } else if (Buffer.isBuffer(p)) {
+      strings.push(p.toString('utf8'))
+    } else {
+      strings.push(Buffer(p).toString('utf8'))
+    }
+  }
+  return strings.join('')
+}
+
+function bufferConcat (parts) {
+  var bufs = []
+  for (var i = 0; i < parts.length; i++) {
+    var p = parts[i]
+    if (Buffer.isBuffer(p)) {
+      bufs.push(p)
+    } else if (typeof p === 'string' || isArrayish(p)
+    || (p && typeof p.subarray === 'function')) {
+      bufs.push(Buffer(p))
+    } else bufs.push(Buffer(String(p)))
+  }
+  return Buffer.concat(bufs)
 }
 
 function arrayConcat (parts) {
