@@ -1,5 +1,7 @@
 var Writable = require('stream').Writable
 var inherits = require('inherits')
+var TA = require('typedarray')
+var U8 = typeof Uint8Array === 'undefined' ? Uint8Array : TA.Uint8Array
 
 function ConcatStream(opts, cb) {
   if (!(this instanceof ConcatStream)) return new ConcatStream(opts, cb)
@@ -72,7 +74,7 @@ function u8Concat (parts) {
   for (var i = 0; i < parts.length; i++) {
     len += parts[i].length
   }
-  var u8 = new Uint8Array(len)
+  var u8 = new U8(len)
   for (var i = 0, offset = 0; i < parts.length; i++) {
     var part = parts[i]
     for (var j = 0; j < part.length; j++) {
