@@ -3,14 +3,23 @@ var inherits = require('inherits')
 
 function ConcatStream(opts, cb) {
   if (!(this instanceof ConcatStream)) return new ConcatStream(opts, cb)
-  Writable.call(this, { objectMode: true })
+  
   if (typeof opts === 'function') {
     cb = opts
     opts = {}
   }
   if (!opts) opts = {}
+  
+  var encoding = opts.encoding || 'buffer'
+  if (!opts.objectMode && (encoding === 'buffer' || encoding === 'string')) {
+    Writable.call(this, { encoding: encoding })
+  }
+  else {
+    Writable.call(this, { objectMode: true })
+  }
+  this.encoding = encoding
+  
   if (cb) this.on('finish', function () { cb(this.getBody()) })
-  this.encoding = opts.encoding || 'buffer'
   this.body = []
 }
 
