@@ -10,7 +10,7 @@ function ConcatStream(opts, cb) {
   }
   if (!opts) opts = {}
   if (cb) this.on('finish', function () { cb(this.getBody()) })
-  this.mode = opts.mode || 'buffer'
+  this.encoding = opts.encoding || 'buffer'
   this.body = []
 }
 
@@ -18,7 +18,7 @@ module.exports = ConcatStream
 inherits(ConcatStream, Writable)
 
 ConcatStream.prototype._write = function(chunk, enc, next) {
-  if (this.mode !== 'buffer') {
+  if (this.encoding !== 'buffer') {
     this.body.push(chunk)
   }
   else if (Buffer.isBuffer(chunk)) {
@@ -34,9 +34,9 @@ ConcatStream.prototype._write = function(chunk, enc, next) {
 }
 
 ConcatStream.prototype.getBody = function () {
-  if (this.mode === 'array') return arrayConcat(this.body)
-  if (this.mode === 'string') return this.body.join('')
-  if (this.mode === 'buffer') return Buffer.concat(this.body)
+  if (this.encoding === 'array') return arrayConcat(this.body)
+  if (this.encoding === 'string') return this.body.join('')
+  if (this.encoding === 'buffer') return Buffer.concat(this.body)
   return this.body
 }
 

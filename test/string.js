@@ -14,7 +14,7 @@ test('string -> buffer stream', function (t) {
 
 test('string stream', function (t) {
   t.plan(2)
-  var strings = concat({ mode: 'string' }, function(out) {
+  var strings = concat({ encoding: 'string' }, function(out) {
     t.equal(typeof out, 'string')
     t.equal(out, 'nacho dogs')
   })
