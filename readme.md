@@ -47,4 +47,25 @@ write.write('!')
 write.end(Buffer('!!1'))
 ```
 
+# methods
+
+```js
+var concat = require('concat-stream')
+```
+
+## var writable = concat(opts={}, cb)
+
+Return a `writable` stream that will fire `cb(data)` with all of the data that
+was written to the stream. Data can be written to `writable` as strings,
+Buffers, arrays of byte integers, and Uint8Arrays. 
+
+Use `opts.encoding` to control what format `data` should be:
+
+* string - get a string
+* buffer - get back a Buffer (this is the default encoding)
+* array - get an array of byte integers
+* uint8array, u8, uint8 - get back a Uint8Array
+
+# license
+
 MIT LICENSE
