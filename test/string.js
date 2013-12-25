@@ -1,5 +1,7 @@
 var concat = require('../')
 var test = require('tape')
+var TA = require('typedarray')
+var U8 = typeof Uint8Array !== 'undefined' ? Uint8Array : TA.Uint8Array
 
 test('string -> buffer stream', function (t) {
   t.plan(2)
@@ -31,4 +33,18 @@ test('end chunk', function (t) {
   endchunk.write("this ")
   endchunk.write("is the ")
   endchunk.end("end")
+})
+
+test('string from mixed write encodings', function (t) {
+  t.plan(2)
+  var strings = concat({ encoding: 'string' }, function(out) {
+    t.equal(typeof out, 'string')
+    t.equal(out, 'nacho dogs')
+  })
+  strings.write('na')
+  strings.write(Buffer('cho'))
+  strings.write([ 32, 100 ])
+  var u8 = new U8
+  u8[0] = 111; u8[1] = 103; u8[2] = 115;
+  strings.end(u8)
 })
