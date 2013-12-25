@@ -1,13 +1,5 @@
 var concat = require('../')
 
-// array stream
-var arrays = concat(function(out) {
-  console.log('arrays', out)
-})
-arrays.write([1,2,3])
-arrays.write([4,5,6])
-arrays.end()
-
 // buffer stream
 var buffers = concat(function(out) {
   console.log('buffers', out.toString())
