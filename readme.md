@@ -36,17 +36,15 @@ write.end()
 // data will be a buffer that toString()s to 'hello world' in the above callback
 ```    
 
-or you can use a Uint8Array!
+or if you want a Uint8Array, you can have those too!
 
 ```js
-var write = concat(function(data) {})
+var write = concat({ encoding: 'u8' }, function(data) {})
 var a = new Uint8Array(3)
 a[0] = 97; a[1] = 98; a[2] = 99
 write.write(a)
-var b = new Uint8Array(1)
-b[0] = 33
-write.(b)
-write.end()
+write.write('!')
+write.end(Buffer('!!1'))
 ```
 
 MIT LICENSE

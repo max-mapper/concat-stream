@@ -13,6 +13,9 @@ function ConcatStream(opts, cb) {
   if (!opts) opts = {}
 
   var encoding = String(opts.encoding || 'buffer').toLowerCase()
+  if (encoding === 'u8' || encoding === 'uint8') {
+    encoding = 'uint8array'
+  }
   Writable.call(this, { objectMode: true })
 
   this.encoding = encoding
