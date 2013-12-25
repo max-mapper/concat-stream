@@ -14,7 +14,7 @@ test('typed array stream', function (t) {
 
   var arrays = concat({ encoding: 'Uint8Array' }, function(out) {
     t.equal(out.constructor.name, 'Uint8Array')
-    t.deepEqual(Buffer(out).toString('utf8'), 'abcd ef ghi')
+    t.deepEqual(Buffer(out).toString('utf8'), 'abcde fg xyz')
   })
   arrays.write(a)
   arrays.write(b)

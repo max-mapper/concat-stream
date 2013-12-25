@@ -10,7 +10,8 @@ function ConcatStream(opts, cb) {
   }
   if (!opts) opts = {}
   
-  var encoding = opts.encoding || 'buffer'
+  var encoding = String(opts.encoding || 'buffer').toLowerCase()
+  
   if (!opts.objectMode && (encoding === 'buffer' || encoding === 'string')) {
     Writable.call(this, { encoding: encoding })
   }
@@ -46,6 +47,7 @@ ConcatStream.prototype.getBody = function () {
   if (this.encoding === 'array') return arrayConcat(this.body)
   if (this.encoding === 'string') return this.body.join('')
   if (this.encoding === 'buffer') return Buffer.concat(this.body)
+  if (this.encoding === 'uint8array') return u8Concat(this.body)
   return this.body
 }
 
@@ -63,4 +65,19 @@ function arrayConcat (parts) {
     res.push.apply(res, parts[i])
   }
   return res
+}
+
+function u8Concat (parts) {
+  var len = 0
+  for (var i = 0; i < parts.length; i++) {
+    len += parts[i].length
+  }
+  var u8 = new Uint8Array(len)
+  for (var i = 0, offset = 0; i < parts.length; i++) {
+    var part = parts[i]
+    for (var j = 0; j < part.length; j++) {
+      u8[offset++] = part[j]
+    }
+  }
+  return u8
 }
