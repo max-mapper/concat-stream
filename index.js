@@ -1,7 +1,7 @@
 var Writable = require('stream').Writable
 var inherits = require('inherits')
 var TA = require('typedarray')
-var U8 = typeof Uint8Array === 'undefined' ? Uint8Array : TA.Uint8Array
+var U8 = typeof Uint8Array !== 'undefined' ? Uint8Array : TA.Uint8Array
 
 function ConcatStream(opts, cb) {
   if (!(this instanceof ConcatStream)) return new ConcatStream(opts, cb)

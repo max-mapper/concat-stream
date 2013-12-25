@@ -13,7 +13,7 @@ test('typed array stream', function (t) {
   c[0] = 32; c[1] = 120; c[2] = 121; c[3] = 122;
 
   var arrays = concat({ encoding: 'Uint8Array' }, function(out) {
-    t.equal(typeof out.constructor.prototype.subarray, 'function')
+    t.equal(typeof out.subarray, 'function')
     t.deepEqual(Buffer(out).toString('utf8'), 'abcde fg xyz')
   })
   arrays.write(a)
