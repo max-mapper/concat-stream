@@ -1,13 +1,5 @@
 var concat = require('../')
 
-// string stream
-var strings = concat(function(out) {
-  console.log('strings', out)
-})
-strings.write("nacho ")
-strings.write("dogs")
-strings.end()
-
 // reemit
 var emitter = concat()
 var receiver = concat(function (out) {
