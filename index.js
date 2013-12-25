@@ -72,6 +72,9 @@ function arrayConcat (parts) {
 function u8Concat (parts) {
   var len = 0
   for (var i = 0; i < parts.length; i++) {
+    if (typeof parts[i] === 'string') {
+      parts[i] = Buffer(parts[i])
+    }
     len += parts[i].length
   }
   var u8 = new U8(len)
