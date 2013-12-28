@@ -21,10 +21,14 @@
   ],
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "tape test/*.js test/server/*.js"
   },
   "license": "MIT",
   "dependencies": {
-    "bops": "0.0.6"
+    "inherits": "~2.0.1",
+    "typedarray": "~0.0.5"
+  },
+  "devDependencies": {
+    "tape": "~2.3.2"
   }
 }
