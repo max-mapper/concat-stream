@@ -1,10 +1,12 @@
 # concat-stream
 
-```sh
-$ npm install concat-stream
-```
+Writable stream that concatenates strings or binary data and calls a callback with the result. Not a transform stream -- more of a stream sink.
 
-then
+[![NPM](https://nodei.co/npm/concat-stream.png)](https://nodei.co/npm/concat-stream/)
+
+[![browser support](https://ci.testling.com/maxogden/node-concat-stream.png)](https://ci.testling.com/maxogden/node-concat-stream)
+
+### examples
 
 ```js
 var concat = require('concat-stream')
