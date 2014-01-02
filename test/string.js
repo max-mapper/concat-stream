@@ -5,7 +5,7 @@ var U8 = typeof Uint8Array !== 'undefined' ? Uint8Array : TA.Uint8Array
 
 test('string -> buffer stream', function (t) {
   t.plan(2)
-  var strings = concat(function(out) {
+  var strings = concat({ encoding: 'buffer'}, function(out) {
     t.ok(Buffer.isBuffer(out))
     t.equal(out.toString('utf8'), 'nacho dogs')
   })

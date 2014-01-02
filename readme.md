@@ -8,46 +8,42 @@ Writable stream that concatenates strings or binary data and calls a callback wi
 
 ### examples
 
+#### Buffers
+
 ```js
 var concat = require('concat-stream')
 var fs = require('fs')
     
 var read = fs.createReadStream('readme.md')
-var write = concat(function(data) {})
+var write = concat(function(data) {
+  // data is all of readme.md as a Buffer
+})
     
 read.pipe(write)
 ```
 
-works with arrays too!
+#### Arrays
 
 ```js
-var write = concat({ encoding: 'array' }, function(data) {})
+var write = concat(function(data) {})
 write.write([1,2,3])
 write.write([4,5,6])
 write.end()
 // data will be [1,2,3,4,5,6] in the above callback
 ```
 
-works with buffers too! can't believe the deals!
+#### Uint8Arrays
 
 ```js
 var write = concat(function(data) {})
-write.write(new Buffer('hello '))
-write.write(new Buffer('world'))
-write.end()
-// data will be a buffer that toString()s to 'hello world' in the above callback
-```    
-
-or if you want a Uint8Array, you can have those too!
-
-```js
-var write = concat({ encoding: 'u8' }, function(data) {})
 var a = new Uint8Array(3)
 a[0] = 97; a[1] = 98; a[2] = 99
 write.write(a)
 write.write('!')
 write.end(Buffer('!!1'))
 ```
+
+See `test/` for more examples
 
 # methods
 
@@ -61,12 +57,15 @@ Return a `writable` stream that will fire `cb(data)` with all of the data that
 was written to the stream. Data can be written to `writable` as strings,
 Buffers, arrays of byte integers, and Uint8Arrays. 
 
-Use `opts.encoding` to control what format `data` should be:
+By default `concat-stream` will give you back the same data type as the type of the first buffer written to the stream. Use `opts.encoding` to set what format `data` should be returned as, e.g. if you if you don't want to rely on the built-in type checking or for some other reason.
 
-* string - get a string
-* buffer - get back a Buffer (this is the default encoding)
-* array - get an array of byte integers
-* uint8array, u8, uint8 - get back a Uint8Array
+* `string` - get a string
+* `buffer` - get back a Buffer
+* `array` - get an array of byte integers
+* `uint8array`, `u8`, `uint8` - get back a Uint8Array
+* `object`, get back an array of Objects
+
+If you don't specify an encoding, and the types can't be inferred (e.g. you write things that aren't int he list above), it will try to convert concat them into a `Buffer`.
 
 # license
 

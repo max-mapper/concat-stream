@@ -12,13 +12,22 @@ function ConcatStream(opts, cb) {
   }
   if (!opts) opts = {}
 
-  var encoding = String(opts.encoding || 'buffer').toLowerCase()
-  if (encoding === 'u8' || encoding === 'uint8') {
-    encoding = 'uint8array'
+  var encoding = opts.encoding
+  var shouldInferEncoding = false
+  
+  if (!encoding) {
+    shouldInferEncoding = true
+  } else {
+    encoding =  String(encoding).toLowerCase()
+    if (encoding === 'u8' || encoding === 'uint8') {
+      encoding = 'uint8array'
+    }
   }
+  
   Writable.call(this, { objectMode: true })
 
   this.encoding = encoding
+  this.shouldInferEncoding = shouldInferEncoding
 
   if (cb) this.on('finish', function () { cb(this.getBody()) })
   this.body = []
@@ -32,7 +41,19 @@ ConcatStream.prototype._write = function(chunk, enc, next) {
   next()
 }
 
+ConcatStream.prototype.inferEncoding = function () {
+  var firstBuffer = this.body[0]
+  if (!firstBuffer) return 'buffer'
+  if (Buffer.isBuffer(firstBuffer)) return 'buffer'
+  if (firstBuffer instanceof Uint8Array) return 'uint8array'
+  if (Array.isArray(firstBuffer)) return 'array'
+  if (typeof firstBuffer === 'string') return 'string'
+  if (Object.prototype.toString.call(firstBuffer) === "[object Object]") return 'object'
+  return 'buffer'
+}
+
 ConcatStream.prototype.getBody = function () {
+  if (this.shouldInferEncoding) this.encoding = this.inferEncoding()
   if (this.encoding === 'array') return arrayConcat(this.body)
   if (this.encoding === 'string') return stringConcat(this.body)
   if (this.encoding === 'buffer') return bufferConcat(this.body)
