@@ -41,8 +41,8 @@ ConcatStream.prototype._write = function(chunk, enc, next) {
   next()
 }
 
-ConcatStream.prototype.inferEncoding = function () {
-  var firstBuffer = this.body[0]
+ConcatStream.prototype.inferEncoding = function (buff) {
+  var firstBuffer = buff || this.body[0]
   if (!firstBuffer) return 'buffer'
   if (Buffer.isBuffer(firstBuffer)) return 'buffer'
   if (firstBuffer instanceof Uint8Array) return 'uint8array'
