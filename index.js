@@ -1,4 +1,4 @@
-var Writable = require('stream').Writable
+var Writable = require('readable-stream').Writable
 var inherits = require('inherits')
 var TA = require('typedarray')
 var U8 = typeof Uint8Array !== 'undefined' ? Uint8Array : TA.Uint8Array
@@ -14,7 +14,7 @@ function ConcatStream(opts, cb) {
 
   var encoding = opts.encoding
   var shouldInferEncoding = false
-  
+
   if (!encoding) {
     shouldInferEncoding = true
   } else {
@@ -23,7 +23,7 @@ function ConcatStream(opts, cb) {
       encoding = 'uint8array'
     }
   }
-  
+
   Writable.call(this, { objectMode: true })
 
   this.encoding = encoding
