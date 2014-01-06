@@ -17,7 +17,7 @@
     "url": "http://github.com/maxogden/node-concat-stream/issues"
   },
   "engines": [
-    "node >= 0.10.0"
+    "node >= 0.8"
   ],
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,8 @@
   "license": "MIT",
   "dependencies": {
     "inherits": "~2.0.1",
-    "typedarray": "~0.0.5"
+    "typedarray": "~0.0.5",
+    "readable-stream": "~1.1.9"
   },
   "devDependencies": {
     "tape": "~2.3.2"
