@@ -4,7 +4,7 @@ Writable stream that concatenates strings or binary data and calls a callback wi
 
 [![NPM](https://nodei.co/npm/concat-stream.png)](https://nodei.co/npm/concat-stream/)
 
-[![browser support](https://ci.testling.com/maxogden/node-concat-stream.png)](https://ci.testling.com/maxogden/node-concat-stream)
+[![browser support](https://ci.testling.com/maxogden/concat-stream.png)](https://ci.testling.com/maxogden/concat-stream)
 
 ### examples
 
