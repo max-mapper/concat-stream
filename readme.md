@@ -69,4 +69,4 @@ If you don't specify an encoding, and the types can't be inferred (e.g. you writ
 
 # license
 
-BSD LICENSE
+MIT LICENSE
