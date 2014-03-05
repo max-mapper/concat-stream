@@ -71,17 +71,24 @@ function isArrayish (arr) {
 
 function stringConcat (parts) {
   var strings = []
+  var needsToString = false
   for (var i = 0; i < parts.length; i++) {
     var p = parts[i]
     if (typeof p === 'string') {
       strings.push(p)
     } else if (Buffer.isBuffer(p)) {
-      strings.push(p.toString('utf8'))
+      strings.push(p)
     } else {
-      strings.push(Buffer(p).toString('utf8'))
+      strings.push(Buffer(p))
     }
   }
-  return strings.join('')
+  if (Buffer.isBuffer(parts[0])) {
+    strings = Buffer.concat(strings)
+    strings = strings.toString('utf8')
+  } else {
+    strings = strings.join('')
+  }
+  return strings
 }
 
 function bufferConcat (parts) {
