@@ -1,5 +1,6 @@
 {
   "name": "concat-stream",
+  "version": "1.4.3",
   "description": "writable stream that concatenates strings or binary data and calls a callback with the result",
   "tags": [
     "stream",
@@ -7,7 +8,6 @@
     "util",
     "utility"
   ],
-  "version": "1.4.2",
   "author": "Max Ogden <max@maxogden.com>",
   "repository": {
     "type": "git",

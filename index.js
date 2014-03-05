@@ -53,6 +53,7 @@ ConcatStream.prototype.inferEncoding = function (buff) {
 }
 
 ConcatStream.prototype.getBody = function () {
+  if (this.body.length === 0) return []
   if (this.shouldInferEncoding) this.encoding = this.inferEncoding()
   if (this.encoding === 'array') return arrayConcat(this.body)
   if (this.encoding === 'string') return stringConcat(this.body)
