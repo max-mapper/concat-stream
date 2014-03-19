@@ -11,10 +11,10 @@
   "author": "Max Ogden <max@maxogden.com>",
   "repository": {
     "type": "git",
-    "url": "http://github.com/maxogden/node-concat-stream.git"
+    "url": "http://github.com/maxogden/concat-stream.git"
   },
   "bugs": {
-    "url": "http://github.com/maxogden/node-concat-stream/issues"
+    "url": "http://github.com/maxogden/concat-stream/issues"
   },
   "engines": [
     "node >= 0.8"
