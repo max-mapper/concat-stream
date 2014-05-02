@@ -1,4 +1,4 @@
-var Duplex = require('stream').Duplex
+var Duplex = require('readable-stream').Duplex
 var inherits = require('inherits')
 var TA = require('typedarray')
 var U8 = typeof Uint8Array !== 'undefined' ? Uint8Array : TA.Uint8Array
