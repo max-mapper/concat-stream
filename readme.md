@@ -4,22 +4,30 @@ Writable stream that concatenates strings or binary data and calls a callback wi
 
 [![NPM](https://nodei.co/npm/concat-stream.png)](https://nodei.co/npm/concat-stream/)
 
-[![browser support](https://ci.testling.com/maxogden/concat-stream.png)](https://ci.testling.com/maxogden/concat-stream)
-
 ### examples
 
 #### Buffers
 
 ```js
-var concat = require('concat-stream')
 var fs = require('fs')
-    
-var read = fs.createReadStream('readme.md')
-var write = concat(function(data) {
-  // data is all of readme.md as a Buffer
-})
-    
-read.pipe(write)
+var concat = require('concat-stream')
+
+var readStream = fs.createReadStream('cat.png')
+var concatStream = concat(gotPicture)
+
+readStream.on('error', handleError)
+readStream.pipe(concatStream)
+
+function gotPicture(imageBuffer) {
+  // imageBuffer is all of `cat.png` as a node.js Buffer
+}
+
+function handleError(err) {
+  // handle your error appropriately here, e.g.:
+  console.error(err) // print the error to STDERR
+  process.exit(1) // exit program with non-zero exit code
+}
+
 ```
 
 #### Arrays
@@ -69,27 +77,7 @@ If you don't specify an encoding, and the types can't be inferred (e.g. you writ
 
 # error handling
 
-`concat-stream` does not handle errors for you, so you must handle errors on whatever streams you pipe into `concat-stream`. This is a general rule when programming with node.js streams: always handle errors on each and every stream. Since `concat-stream` is not itself a stream it does not emit errors. Here is a common example of handling errors in a stream:
-
-```
-var fs = require('fs')
-var concat = require('concat-stream')
-
-var readStream = fs.createReadStream('cat.png')
-var concatStream = concat(gotPicture)
-
-readStream.on('error', handleError)
-
-function gotPicture(imageBuffer) {
-  // process image
-}
-
-function handleError(err) {
-  // handle your error appropriately here
-  console.error(err) // print the error to STDERR
-  process.exit(1) // exit program with non-zero exit code
-}
-```
+`concat-stream` does not handle errors for you, so you must handle errors on whatever streams you pipe into `concat-stream`. This is a general rule when programming with node.js streams: always handle errors on each and every stream. Since `concat-stream` is not itself a stream it does not emit errors.
 
 # license
 
