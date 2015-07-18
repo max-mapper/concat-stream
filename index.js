@@ -33,7 +33,19 @@ function ConcatStream(opts, cb) {
   this.encoding = encoding
   this.shouldInferEncoding = shouldInferEncoding
 
-  if (cb) this.on('finish', function () { cb(this.getBody()) })
+  this.on('finish', function () {
+    var
+      body;
+
+    body = this.getBody()
+
+    if (cb)
+      cb(body)
+
+    if (this.onFulfilled)
+      this.onFulfilled(body)
+  })
+
   this.body = []
 }
 
@@ -63,6 +75,10 @@ ConcatStream.prototype.getBody = function () {
   if (this.encoding === 'buffer') return bufferConcat(this.body)
   if (this.encoding === 'uint8array') return u8Concat(this.body)
   return this.body
+}
+
+ConcatStream.prototype.then = function (onFulfilled) {
+  this.onFulfilled = onFulfilled
 }
 
 var isArray = Array.isArray || function (arr) {
