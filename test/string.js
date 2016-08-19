@@ -58,7 +58,7 @@ test('string from buffers with multibyte characters', function (t) {
   var snowman = new Buffer('☃')
   for (var i = 0; i < 8; i++) {
     strings.write(snowman.slice(0, 1))
-    strings.write(snowman.slice(1))    
+    strings.write(snowman.slice(1))
   }
   strings.end()
 })
@@ -73,4 +73,15 @@ test('string infer encoding with empty string chunk', function (t) {
   strings.write("nacho ")
   strings.write("dogs")
   strings.end()
+})
+
+test('to string numbers', function (t) {
+  var write = concat(function (str) {
+    t.equal(str, 'a1000')
+    t.end()
+  })
+
+  write.write('a')
+  write.write(1000)
+  write.end()
 })
