@@ -83,7 +83,7 @@ function stringConcat (parts) {
     } else if (Buffer.isBuffer(p)) {
       strings.push(p)
     } else {
-      strings.push(Buffer(p))
+      strings.push(new Buffer(p))
     }
   }
   if (Buffer.isBuffer(parts[0])) {
@@ -103,8 +103,8 @@ function bufferConcat (parts) {
       bufs.push(p)
     } else if (typeof p === 'string' || isArrayish(p)
     || (p && typeof p.subarray === 'function')) {
-      bufs.push(Buffer(p))
-    } else bufs.push(Buffer(String(p)))
+      bufs.push(new Buffer(p))
+    } else bufs.push(new Buffer(String(p)))
   }
   return Buffer.concat(bufs)
 }
@@ -121,7 +121,7 @@ function u8Concat (parts) {
   var len = 0
   for (var i = 0; i < parts.length; i++) {
     if (typeof parts[i] === 'string') {
-      parts[i] = Buffer(parts[i])
+      parts[i] = new Buffer(parts[i])
     }
     len += parts[i].length
   }

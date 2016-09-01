@@ -14,7 +14,7 @@ test('typed array stream', function (t) {
 
   var arrays = concat({ encoding: 'Uint8Array' }, function(out) {
     t.equal(typeof out.subarray, 'function')
-    t.deepEqual(Buffer(out).toString('utf8'), 'abcde fg xyz')
+    t.deepEqual(new Buffer(out).toString('utf8'), 'abcde fg xyz')
   })
   arrays.write(a)
   arrays.write(b)
@@ -25,9 +25,9 @@ test('typed array from strings, buffers, and arrays', function (t) {
   t.plan(2)
   var arrays = concat({ encoding: 'Uint8Array' }, function(out) {
     t.equal(typeof out.subarray, 'function')
-    t.deepEqual(Buffer(out).toString('utf8'), 'abcde fg xyz')
+    t.deepEqual(new Buffer(out).toString('utf8'), 'abcde fg xyz')
   })
   arrays.write('abcde')
-  arrays.write(Buffer(' fg '))
+  arrays.write(new Buffer(' fg '))
   arrays.end([ 120, 121, 122 ])
 })
