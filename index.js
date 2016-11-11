@@ -65,10 +65,6 @@ ConcatStream.prototype.getBody = function () {
   return this.body
 }
 
-var isArray = Array.isArray || function (arr) {
-  return Object.prototype.toString.call(arr) == '[object Array]'
-}
-
 function isArrayish (arr) {
   return /Array\]$/.test(Object.prototype.toString.call(arr))
 }
