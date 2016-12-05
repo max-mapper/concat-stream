@@ -1,4 +1,4 @@
-var Writable = require('readable-stream').Writable
+var stream = require('readable-stream')
 var inherits = require('inherits')
 
 if (typeof Uint8Array === 'undefined') {
@@ -7,18 +7,9 @@ if (typeof Uint8Array === 'undefined') {
   var U8 = Uint8Array
 }
 
-function ConcatStream(opts, cb) {
-  if (!(this instanceof ConcatStream)) return new ConcatStream(opts, cb)
-
-  if (typeof opts === 'function') {
-    cb = opts
-    opts = {}
-  }
-  if (!opts) opts = {}
-
+function ConcatStream(opts) {
   var encoding = opts.encoding
   var shouldInferEncoding = false
-
   if (!encoding) {
     shouldInferEncoding = true
   } else {
@@ -27,22 +18,9 @@ function ConcatStream(opts, cb) {
       encoding = 'uint8array'
     }
   }
-
-  Writable.call(this, { objectMode: true })
-
   this.encoding = encoding
   this.shouldInferEncoding = shouldInferEncoding
-
-  if (cb) this.on('finish', function () { cb(this.getBody()) })
-  this.body = []
-}
-
-module.exports = ConcatStream
-inherits(ConcatStream, Writable)
-
-ConcatStream.prototype._write = function(chunk, enc, next) {
-  this.body.push(chunk)
-  next()
+  this.transform = opts.transform || function (data) {return data}
 }
 
 ConcatStream.prototype.inferEncoding = function (buff) {
@@ -58,12 +36,63 @@ ConcatStream.prototype.inferEncoding = function (buff) {
 ConcatStream.prototype.getBody = function () {
   if (!this.encoding && this.body.length === 0) return []
   if (this.shouldInferEncoding) this.encoding = this.inferEncoding()
-  if (this.encoding === 'array') return arrayConcat(this.body)
-  if (this.encoding === 'string') return stringConcat(this.body)
-  if (this.encoding === 'buffer') return bufferConcat(this.body)
-  if (this.encoding === 'uint8array') return u8Concat(this.body)
-  return this.body
+  var body = this.body
+  if (this.encoding === 'array') body = arrayConcat(body)
+  if (this.encoding === 'string') body = stringConcat(body)
+  if (this.encoding === 'buffer') body = bufferConcat(body)
+  if (this.encoding === 'uint8array') body = u8Concat(body)
+  return this.transform(body)
 }
+
+ConcatStream.prototype.isConcatStream = true
+
+function inheritsConcatStream (Stream) {
+  for (var key in ConcatStream.prototype) {
+    if (ConcatStream.prototype.hasOwnProperty(key)){
+      Stream.prototype[key] = ConcatStream.prototype[key]
+    }
+  }
+}
+
+function WritableConcatStream (opts, cb) {
+  stream.Writable.call(this, { objectMode: true })
+  ConcatStream.call(this, opts)
+  this.body = []
+  this.on('finish', function () {
+    cb(this.getBody())
+  })
+}
+inherits(WritableConcatStream, stream.Writable)
+inheritsConcatStream(WritableConcatStream)
+WritableConcatStream.prototype._write = function(chunk, enc, next) {
+  this.body.push(chunk)
+  next()
+}
+
+function ReadableConcatStream (opts, data) {
+  stream.Readable.call(this, { objectMode: true })
+  ConcatStream.call(this, opts)
+  this.body = data instanceof Array ? data : [data]
+}
+inherits(ReadableConcatStream, stream.Readable)
+inheritsConcatStream(ReadableConcatStream)
+ReadableConcatStream.prototype._read = function () {
+  this.push(this.getBody())
+  this.push(null)
+}
+
+function DuplexConcatStream (opts) {
+  stream.Duplex.call(this, { readableObjectMode: true, writableObjectMode: true })
+  ConcatStream.call(this, opts)
+  this.body = []
+  this.on('finish', function () {
+    ReadableConcatStream.prototype._read.call(this)
+  })
+}
+inherits(DuplexConcatStream, stream.Duplex)
+inheritsConcatStream(DuplexConcatStream)
+DuplexConcatStream.prototype._write = WritableConcatStream.prototype._write
+DuplexConcatStream.prototype._read = function () {}
 
 var isArray = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]'
@@ -141,3 +170,16 @@ function u8Concat (parts) {
   }
   return u8
 }
+
+function concatStream () {
+  var opts = (typeof arguments[0] == 'object') && (arguments[0].constructor == Object) && arguments[0]
+  var arg = arguments[opts ? 1 : 0]
+  opts = opts || {}
+  if (this instanceof concatStream) return DuplexConcatStream.call(this, opts)
+  if (typeof arg == 'undefined') return new DuplexConcatStream(opts)
+  if (typeof arg == 'function') return new WritableConcatStream(opts, arg)
+  return new ReadableConcatStream(opts, arg)
+}
+inherits(concatStream, DuplexConcatStream)
+
+module.exports = concatStream
