@@ -1,4 +1,4 @@
-var Writable = require('readable-stream').Writable
+var Duplex = require('readable-stream').Duplex
 var inherits = require('inherits')
 
 if (typeof Uint8Array === 'undefined') {
@@ -28,22 +28,36 @@ function ConcatStream(opts, cb) {
     }
   }
 
-  Writable.call(this, { objectMode: true })
+  Duplex.call(this, { objectMode: true })
 
   this.encoding = encoding
   this.shouldInferEncoding = shouldInferEncoding
 
-  if (cb) this.on('finish', function () { cb(this.getBody()) })
+  if (cb) {
+    this.on('finish', function () { cb(this.getBody()) })
+  }
+  
+  if (typeof opts.through === 'function') {
+    this.on('finish', function () {
+      opts.through(this.getBody(), (function (err, result) {
+        if (err) { this.emit('error', err); return }
+        this.push(result)
+        this.push(null)
+      }).bind(this))
+    })
+  }
+
   this.body = []
 }
 
 module.exports = ConcatStream
-inherits(ConcatStream, Writable)
+inherits(ConcatStream, Duplex)
 
 ConcatStream.prototype._write = function(chunk, enc, next) {
   this.body.push(chunk)
   next()
 }
+ConcatStream.prototype._read = function() {}
 
 ConcatStream.prototype.inferEncoding = function (buff) {
   var firstBuffer = buff === undefined ? this.body[0] : buff;
