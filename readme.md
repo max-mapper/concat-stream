@@ -44,6 +44,27 @@ function handleError(err) {
 
 ```
 
+#### Buffers (using promise)
+
+```js
+var fs = require('fs')
+var concat = require('concat-stream')
+
+var readStream = fs.createReadStream('cat.png')
+
+readStream.on('error', handleError)
+
+readStream.pipe(concat()).then(function (imageBuffer) {
+  // imageBuffer is all of `cat.png` as a node.js Buffer
+})
+
+function handleError(err) {
+  // handle your error appropriately here, e.g.:
+  console.error(err) // print the error to STDERR
+  process.exit(1) // exit program with non-zero exit code
+}
+```
+
 #### Arrays
 
 ```js
@@ -76,8 +97,7 @@ var concat = require('concat-stream')
 ## var writable = concat(opts={}, cb)
 
 Return a `writable` stream that will fire `cb(data)` with all of the data that
-was written to the stream. Data can be written to `writable` as strings,
-Buffers, arrays of byte integers, and Uint8Arrays. 
+was written to the stream.  The writable stream is also a promise which can be used instead of `cb`.  Data can be written to `writable` as strings, Buffers, arrays of byte integers, and Uint8Arrays. 
 
 By default `concat-stream` will give you back the same data type as the type of the first buffer written to the stream. Use `opts.encoding` to set what format `data` should be returned as, e.g. if you if you don't want to rely on the built-in type checking or for some other reason.
 
