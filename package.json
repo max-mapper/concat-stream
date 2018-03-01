@@ -1,6 +1,6 @@
 {
   "name": "concat-stream",
-  "version": "1.4.10",
+  "version": "1.4.11",
   "description": "writable stream that concatenates strings or binary data and calls a callback with the result",
   "tags": [
     "stream",
