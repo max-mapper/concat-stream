@@ -82,8 +82,10 @@ function stringConcat (parts) {
       strings.push(p)
     } else if (Buffer.isBuffer(p)) {
       strings.push(p)
-    } else {
+    } else if (typeof p !== 'number') {
       strings.push(Buffer(p))
+    } else {
+      strings.push(Buffer(String(p)))
     }
   }
   if (Buffer.isBuffer(parts[0])) {
