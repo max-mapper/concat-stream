@@ -56,8 +56,10 @@ function stringConcat (parts) {
       strings.push(p)
     } else if (Buffer.isBuffer(p)) {
       strings.push(p.toString('utf8'))
-    } else {
+    } else if (typeof p !== 'number') {
       strings.push(Buffer(p).toString('utf8'))
+    } else {
+      strings.push(Buffer(String(p)).toString('utf8'))
     }
   }
   return strings.join('')
