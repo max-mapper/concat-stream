@@ -2,6 +2,7 @@ var concat = require('../')
 var test = require('tape')
 var TA = require('typedarray')
 var U8 = typeof Uint8Array !== 'undefined' ? Uint8Array : TA.Uint8Array
+var bufferFrom = require('buffer-from')
 
 test('typed array stream', function (t) {
   t.plan(2)
@@ -14,7 +15,7 @@ test('typed array stream', function (t) {
 
   var arrays = concat({ encoding: 'Uint8Array' }, function(out) {
     t.equal(typeof out.subarray, 'function')
-    t.deepEqual(new Buffer(out).toString('utf8'), 'abcde fg xyz')
+    t.deepEqual(bufferFrom(out).toString('utf8'), 'abcde fg xyz')
   })
   arrays.write(a)
   arrays.write(b)
@@ -25,9 +26,9 @@ test('typed array from strings, buffers, and arrays', function (t) {
   t.plan(2)
   var arrays = concat({ encoding: 'Uint8Array' }, function(out) {
     t.equal(typeof out.subarray, 'function')
-    t.deepEqual(new Buffer(out).toString('utf8'), 'abcde fg xyz')
+    t.deepEqual(bufferFrom(out).toString('utf8'), 'abcde fg xyz')
   })
   arrays.write('abcde')
-  arrays.write(new Buffer(' fg '))
+  arrays.write(bufferFrom(' fg '))
   arrays.end([ 120, 121, 122 ])
 })
