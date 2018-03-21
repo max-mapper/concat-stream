@@ -2,6 +2,7 @@ var concat = require('../')
 var test = require('tape')
 var TA = require('typedarray')
 var U8 = typeof Uint8Array !== 'undefined' ? Uint8Array : TA.Uint8Array
+var bufferFrom = require('buffer-from')
 
 test('string -> buffer stream', function (t) {
   t.plan(2)
@@ -42,7 +43,7 @@ test('string from mixed write encodings', function (t) {
     t.equal(out, 'nacho dogs')
   })
   strings.write('na')
-  strings.write(new Buffer('cho'))
+  strings.write(bufferFrom('cho'))
   strings.write([ 32, 100 ])
   var u8 = new U8(3)
   u8[0] = 111; u8[1] = 103; u8[2] = 115;
@@ -55,7 +56,7 @@ test('string from buffers with multibyte characters', function (t) {
     t.equal(typeof out, 'string')
     t.equal(out, '☃☃☃☃☃☃☃☃')
   })
-  var snowman = new Buffer('☃')
+  var snowman = bufferFrom('☃')
   for (var i = 0; i < 8; i++) {
     strings.write(snowman.slice(0, 1))
     strings.write(snowman.slice(1))
