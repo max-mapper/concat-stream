@@ -79,7 +79,7 @@ Return a `writable` stream that will fire `cb(data)` with all of the data that
 was written to the stream. Data can be written to `writable` as strings,
 Buffers, arrays of byte integers, and Uint8Arrays. 
 
-By default `concat-stream` will give you back the same data type as the type of the first buffer written to the stream. Use `opts.encoding` to set what format `data` should be returned as, e.g. if you if you don't want to rely on the built-in type checking or for some other reason.
+By default `concat-stream` will give you back the same data type as the type of the first buffer written to the stream. Use `opts.encoding` to set what format `data` should be returned as, e.g. if you don't want to rely on the built-in type checking or for some other reason.
 
 * `string` - get a string
 * `buffer` - get back a Buffer
