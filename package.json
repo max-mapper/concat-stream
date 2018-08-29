@@ -17,7 +17,7 @@
     "url": "http://github.com/maxogden/concat-stream/issues"
   },
   "engines": [
-    "node >= 0.8"
+    "node >= 6.0"
   ],
   "main": "index.js",
   "files": [
