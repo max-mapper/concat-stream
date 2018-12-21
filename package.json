@@ -17,7 +17,7 @@
     "url": "http://github.com/maxogden/concat-stream/issues"
   },
   "engines": [
-    "node >= 0.8"
+    "node >= 6.0"
   ],
   "main": "index.js",
   "files": [
@@ -30,7 +30,7 @@
   "dependencies": {
     "buffer-from": "^1.0.0",
     "inherits": "^2.0.3",
-    "readable-stream": "^2.2.2",
+    "readable-stream": "^3.0.2",
     "typedarray": "^0.0.6"
   },
   "devDependencies": {
