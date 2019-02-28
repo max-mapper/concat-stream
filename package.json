@@ -16,9 +16,9 @@
   "bugs": {
     "url": "http://github.com/maxogden/concat-stream/issues"
   },
-  "engines": [
-    "node >= 6.0"
-  ],
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "main": "index.js",
   "files": [
     "index.js"
@@ -28,10 +28,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "buffer-from": "^1.0.0",
     "inherits": "^2.0.3",
-    "readable-stream": "^3.0.2",
-    "typedarray": "^0.0.6"
+    "readable-stream": "^3.0.2"
   },
   "devDependencies": {
     "tape": "^4.6.3"
