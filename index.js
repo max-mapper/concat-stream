@@ -80,7 +80,6 @@ function isBufferish (p) {
 
 function stringConcat (parts) {
   var strings = []
-  var needsToString = false
   for (var i = 0; i < parts.length; i++) {
     var p = parts[i]
     if (typeof p === 'string') {
