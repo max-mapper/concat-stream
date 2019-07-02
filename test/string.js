@@ -1,62 +1,59 @@
-var concat = require('../')
+var Concat = require('../')
 var test = require('tape')
-var TA = require('typedarray')
-var U8 = typeof Uint8Array !== 'undefined' ? Uint8Array : TA.Uint8Array
-var bufferFrom = require('buffer-from')
 
 test('string -> buffer stream', function (t) {
   t.plan(2)
-  var strings = concat({ encoding: 'buffer'}, function(out) {
+  var strings = new Concat({ encoding: 'buffer'}, function(out) {
     t.ok(Buffer.isBuffer(out))
     t.equal(out.toString('utf8'), 'nacho dogs')
   })
-  strings.write("nacho ")
-  strings.write("dogs")
+  strings.write('nacho ')
+  strings.write('dogs')
   strings.end()
 })
 
 test('string stream', function (t) {
   t.plan(2)
-  var strings = concat({ encoding: 'string' }, function(out) {
+  var strings = new Concat({ encoding: 'string' }, function(out) {
     t.equal(typeof out, 'string')
     t.equal(out, 'nacho dogs')
   })
-  strings.write("nacho ")
-  strings.write("dogs")
+  strings.write('nacho ')
+  strings.write('dogs')
   strings.end()
 })
 
 test('end chunk', function (t) {
   t.plan(1)
-  var endchunk = concat({ encoding: 'string' }, function(out) {
+  var endchunk = new Concat({ encoding: 'string' }, function(out) {
     t.equal(out, 'this is the end')
   })
-  endchunk.write("this ")
-  endchunk.write("is the ")
-  endchunk.end("end")
+  endchunk.write('this ')
+  endchunk.write('is the ')
+  endchunk.end('end')
 })
 
 test('string from mixed write encodings', function (t) {
   t.plan(2)
-  var strings = concat({ encoding: 'string' }, function(out) {
+  var strings = new Concat({ encoding: 'string' }, function(out) {
     t.equal(typeof out, 'string')
     t.equal(out, 'nacho dogs')
   })
   strings.write('na')
-  strings.write(bufferFrom('cho'))
+  strings.write(Buffer.from('cho'))
   strings.write([ 32, 100 ])
-  var u8 = new U8(3)
-  u8[0] = 111; u8[1] = 103; u8[2] = 115;
+  var u8 = new Uint8Array(3)
+  u8[0] = 111; u8[1] = 103; u8[2] = 115
   strings.end(u8)
 })
 
 test('string from buffers with multibyte characters', function (t) {
   t.plan(2)
-  var strings = concat({ encoding: 'string' }, function(out) {
+  var strings = new Concat({ encoding: 'string' }, function(out) {
     t.equal(typeof out, 'string')
     t.equal(out, '☃☃☃☃☃☃☃☃')
   })
-  var snowman = bufferFrom('☃')
+  var snowman = Buffer.from('☃')
   for (var i = 0; i < 8; i++) {
     strings.write(snowman.slice(0, 1))
     strings.write(snowman.slice(1))
@@ -66,18 +63,18 @@ test('string from buffers with multibyte characters', function (t) {
 
 test('string infer encoding with empty string chunk', function (t) {
   t.plan(2)
-  var strings = concat(function(out) {
+  var strings = new Concat(function(out) {
     t.equal(typeof out, 'string')
     t.equal(out, 'nacho dogs')
   })
-  strings.write("")
-  strings.write("nacho ")
-  strings.write("dogs")
+  strings.write('')
+  strings.write('nacho ')
+  strings.write('dogs')
   strings.end()
 })
 
 test('to string numbers', function (t) {
-  var write = concat(function (str) {
+  var write = new Concat(function (str) {
     t.equal(str, 'a1000')
     t.end()
   })

@@ -1,74 +1,61 @@
 var Writable = require('readable-stream').Writable
-var inherits = require('inherits')
-var bufferFrom = require('buffer-from')
 
-if (typeof Uint8Array === 'undefined') {
-  var U8 = require('typedarray').Uint8Array
-} else {
-  var U8 = Uint8Array
-}
+class ConcatStream extends Writable {
+  constructor (opts, cb) {
+    super({ objectMode: true })
 
-function ConcatStream(opts, cb) {
-  if (!(this instanceof ConcatStream)) return new ConcatStream(opts, cb)
-
-  if (typeof opts === 'function') {
-    cb = opts
-    opts = {}
-  }
-  if (!opts) opts = {}
-
-  var encoding = opts.encoding
-  var shouldInferEncoding = false
-
-  if (!encoding) {
-    shouldInferEncoding = true
-  } else {
-    encoding =  String(encoding).toLowerCase()
-    if (encoding === 'u8' || encoding === 'uint8') {
-      encoding = 'uint8array'
+    if (typeof opts === 'function') {
+      cb = opts
+      opts = {}
     }
+    if (!opts) opts = {}
+
+    var encoding = opts.encoding
+    var shouldInferEncoding = false
+
+    if (!encoding) {
+      shouldInferEncoding = true
+    } else {
+      encoding = String(encoding).toLowerCase()
+      if (encoding === 'u8' || encoding === 'uint8') {
+        encoding = 'uint8array'
+      }
+    }
+
+    this.encoding = encoding
+    this.shouldInferEncoding = shouldInferEncoding
+
+    if (cb) this.on('finish', function () { cb(this.getBody()) })
+    this.body = []
   }
 
-  Writable.call(this, { objectMode: true })
+  _write (chunk, enc, next) {
+    this.body.push(chunk)
+    next()
+  }
 
-  this.encoding = encoding
-  this.shouldInferEncoding = shouldInferEncoding
+  inferEncoding (buff) {
+    var firstBuffer = buff === undefined ? this.body[0] : buff;
+    if (Buffer.isBuffer(firstBuffer)) return 'buffer'
+    if (typeof Uint8Array !== 'undefined' && firstBuffer instanceof Uint8Array) return 'uint8array'
+    if (Array.isArray(firstBuffer)) return 'array'
+    if (typeof firstBuffer === 'string') return 'string'
+    if (Object.prototype.toString.call(firstBuffer) === "[object Object]") return 'object'
+    return 'buffer'
+  }
 
-  if (cb) this.on('finish', function () { cb(this.getBody()) })
-  this.body = []
+  getBody () {
+    if (!this.encoding && this.body.length === 0) return []
+    if (this.shouldInferEncoding) this.encoding = this.inferEncoding()
+    if (this.encoding === 'array') return arrayConcat(this.body)
+    if (this.encoding === 'string') return stringConcat(this.body)
+    if (this.encoding === 'buffer') return bufferConcat(this.body)
+    if (this.encoding === 'uint8array') return u8Concat(this.body)
+    return this.body
+  }
 }
 
 module.exports = ConcatStream
-inherits(ConcatStream, Writable)
-
-ConcatStream.prototype._write = function(chunk, enc, next) {
-  this.body.push(chunk)
-  next()
-}
-
-ConcatStream.prototype.inferEncoding = function (buff) {
-  var firstBuffer = buff === undefined ? this.body[0] : buff;
-  if (Buffer.isBuffer(firstBuffer)) return 'buffer'
-  if (typeof Uint8Array !== 'undefined' && firstBuffer instanceof Uint8Array) return 'uint8array'
-  if (Array.isArray(firstBuffer)) return 'array'
-  if (typeof firstBuffer === 'string') return 'string'
-  if (Object.prototype.toString.call(firstBuffer) === "[object Object]") return 'object'
-  return 'buffer'
-}
-
-ConcatStream.prototype.getBody = function () {
-  if (!this.encoding && this.body.length === 0) return []
-  if (this.shouldInferEncoding) this.encoding = this.inferEncoding()
-  if (this.encoding === 'array') return arrayConcat(this.body)
-  if (this.encoding === 'string') return stringConcat(this.body)
-  if (this.encoding === 'buffer') return bufferConcat(this.body)
-  if (this.encoding === 'uint8array') return u8Concat(this.body)
-  return this.body
-}
-
-var isArray = Array.isArray || function (arr) {
-  return Object.prototype.toString.call(arr) == '[object Array]'
-}
 
 function isArrayish (arr) {
   return /Array\]$/.test(Object.prototype.toString.call(arr))
@@ -88,9 +75,9 @@ function stringConcat (parts) {
     } else if (Buffer.isBuffer(p)) {
       strings.push(p)
     } else if (isBufferish(p)) {
-      strings.push(bufferFrom(p))
+      strings.push(Buffer.from(p))
     } else {
-      strings.push(bufferFrom(String(p)))
+      strings.push(Buffer.from(String(p)))
     }
   }
   if (Buffer.isBuffer(parts[0])) {
@@ -109,9 +96,9 @@ function bufferConcat (parts) {
     if (Buffer.isBuffer(p)) {
       bufs.push(p)
     } else if (isBufferish(p)) {
-      bufs.push(bufferFrom(p))
+      bufs.push(Buffer.from(p))
     } else {
-      bufs.push(bufferFrom(String(p)))
+      bufs.push(Buffer.from(String(p)))
     }
   }
   return Buffer.concat(bufs)
@@ -129,11 +116,11 @@ function u8Concat (parts) {
   var len = 0
   for (var i = 0; i < parts.length; i++) {
     if (typeof parts[i] === 'string') {
-      parts[i] = bufferFrom(parts[i])
+      parts[i] = Buffer.from(parts[i])
     }
     len += parts[i].length
   }
-  var u8 = new U8(len)
+  var u8 = new Uint8Array(len)
   for (var i = 0, offset = 0; i < parts.length; i++) {
     var part = parts[i]
     for (var j = 0; j < part.length; j++) {
